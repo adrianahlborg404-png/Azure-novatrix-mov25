@@ -21,7 +21,7 @@ Repo: <https://github.com/adrianahlborg404-png/Azure-novatrix-mov25>
 - [x] Kundtjänstsida med ärendeformulär publicerad
 - [x] Testat och dokumenterat
 
-### [v35 — Entra ID och behörigheter](v35/README.md)
+### [v35 — Entra ID och behörigheter](https://github.com/adrianahlborg404-png/Azure-novatrix-mov25/tree/Master/v35)
 
 - [x] Veckoavsnitt tillagt i repot
 - [x] Användare och grupper uppsatta i Entra ID
