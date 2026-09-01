@@ -82,4 +82,11 @@ Repo: <https://github.com/adrianahlborg404-png/Azure-novatrix-mov25>
 ● Koppling mot Microsoft 365
 
 ● Flödet ihopkopplat med Azure-lösningen
+
 ● Hela kedjan testad och dokumenterad
+
+### [v40 — Virtualiseringsnivåer]
+
+Veckoavsnitt tillagt i repot
+
+
