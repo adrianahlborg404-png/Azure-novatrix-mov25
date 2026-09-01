@@ -1,53 +1,438 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Novatrix Kundtjänst</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:      #16232e;
+    --ink-soft: #46596a;
+    --paper:    #ffffff;
+    --wash:     #eef2f4;
+    --line:     #d5dee3;
+    --signal:   #1d6f6a;
+    --signal-d: #14524e;
+    --alert:    #a33a2c;
+    --radius:   4px;
+  }
 
-    <title>Novatrix Kundtjänst</title>
+  *,*::before,*::after{ box-sizing:border-box; }
+
+  html{ -webkit-text-size-adjust:100%; }
+
+  body{
+    margin:0;
+    background:var(--wash);
+    color:var(--ink);
+    font-family:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+    font-size:16px;
+    line-height:1.6;
+  }
+
+  /* ---------- Sidhuvud ---------- */
+
+  .masthead{
+    background:var(--ink);
+    color:#fff;
+  }
+
+  .masthead-inner{
+    max-width:1040px;
+    margin:0 auto;
+    padding:18px 24px;
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+
+  .wordmark{
+    font-size:1.15rem;
+    font-weight:700;
+    letter-spacing:-0.015em;
+    margin:0;
+  }
+
+  .masthead-inner .dept{
+    margin:0;
+    font-size:0.9rem;
+    font-weight:500;
+    color:#9fb3c0;
+  }
+
+  /* ---------- Statusrad ---------- */
+
+  .status{
+    background:#1f2f3c;
+    color:#cfe0e6;
+    font-size:0.85rem;
+  }
+
+  .status-inner{
+    max-width:1040px;
+    margin:0 auto;
+    padding:9px 24px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+  }
+
+  .dot{
+    width:8px; height:8px;
+    border-radius:50%;
+    background:#4ea896;
+    flex:none;
+  }
+
+  .dot.closed{ background:#c98a3c; }
+
+  /* ---------- Innehåll ---------- */
+
+  .layout{
+    max-width:1040px;
+    margin:0 auto;
+    padding:44px 24px 64px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:36px;
+  }
+
+  @media (min-width:880px){
+    .layout{
+      grid-template-columns:minmax(0,3fr) minmax(0,4fr);
+      gap:56px;
+      align-items:start;
+    }
+  }
+
+  .intro h1{
+    font-size:2rem;
+    line-height:1.2;
+    letter-spacing:-0.02em;
+    font-weight:600;
+    margin:0 0 14px;
+  }
+
+  .intro .lead{
+    margin:0 0 30px;
+    color:var(--ink-soft);
+    max-width:46ch;
+  }
+
+  .facts{
+    margin:0;
+    border-top:1px solid var(--line);
+  }
+
+  .facts div{
+    display:flex;
+    justify-content:space-between;
+    gap:18px;
+    padding:12px 0;
+    border-bottom:1px solid var(--line);
+  }
+
+  .facts dt{
+    color:var(--ink-soft);
+    font-size:0.9rem;
+  }
+
+  .facts dd{
+    margin:0;
+    font-weight:500;
+    text-align:right;
+  }
+
+  .facts a{ color:var(--ink); text-decoration:none; border-bottom:1px solid var(--line); }
+  .facts a:hover{ border-bottom-color:var(--signal); }
+
+  /* ---------- Formulär ---------- */
+
+  .panel{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:32px;
+  }
+
+  @media (max-width:520px){
+    .panel{ padding:24px 20px; }
+  }
+
+  .panel h2{
+    font-size:1.1rem;
+    font-weight:600;
+    margin:0 0 4px;
+  }
+
+  .panel .hint{
+    margin:0 0 26px;
+    font-size:0.9rem;
+    color:var(--ink-soft);
+  }
+
+  .field{ margin-bottom:20px; }
+
+  .field label{
+    display:block;
+    font-size:0.9rem;
+    font-weight:500;
+    margin-bottom:6px;
+  }
+
+  .field input,
+  .field textarea{
+    width:100%;
+    font:inherit;
+    color:var(--ink);
+    background:#fbfcfd;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:11px 13px;
+  }
+
+  .field textarea{
+    resize:vertical;
+    min-height:150px;
+  }
+
+  .field input:hover,
+  .field textarea:hover{ border-color:#b6c4cc; }
+
+  .field input:focus,
+  .field textarea:focus{
+    outline:2px solid var(--signal);
+    outline-offset:1px;
+    border-color:var(--signal);
+    background:#fff;
+  }
+
+  .field input.bad,
+  .field textarea.bad{ border-color:var(--alert); }
+
+  .err{
+    display:none;
+    margin:6px 0 0;
+    font-size:0.85rem;
+    color:var(--alert);
+  }
+
+  .err.show{ display:block; }
+
+  .send{
+    font:inherit;
+    font-weight:600;
+    color:#fff;
+    background:var(--signal);
+    border:none;
+    border-radius:var(--radius);
+    padding:12px 24px;
+    cursor:pointer;
+  }
+
+  .send:hover{ background:var(--signal-d); }
+
+  .send:focus-visible{
+    outline:2px solid var(--ink);
+    outline-offset:2px;
+  }
+
+  .privacy{
+    margin:16px 0 0;
+    font-size:0.82rem;
+    color:var(--ink-soft);
+  }
+
+  /* ---------- Kvittens ---------- */
+
+  .receipt{
+    display:none;
+    border-left:3px solid var(--signal);
+    padding-left:18px;
+  }
+
+  .receipt h2{
+    font-size:1.1rem;
+    margin:0 0 8px;
+  }
+
+  .receipt p{
+    margin:0 0 6px;
+    color:var(--ink-soft);
+  }
+
+  .receipt .ref{
+    font-weight:600;
+    color:var(--ink);
+  }
+
+  /* ---------- Sidfot ---------- */
+
+  .foot{
+    border-top:1px solid var(--line);
+    background:var(--paper);
+  }
+
+  .foot-inner{
+    max-width:1040px;
+    margin:0 auto;
+    padding:20px 24px;
+    font-size:0.85rem;
+    color:var(--ink-soft);
+  }
+</style>
 </head>
-
 <body>
 
-    <header>
-        <h1>Novatrix AB</h1>
-        <p>Kundtjänst</p>
-    </header>
+<div class="masthead">
+  <div class="masthead-inner">
+    <p class="wordmark">Novatrix AB</p>
+    <p class="dept">Kundtjänst</p>
+  </div>
+</div>
 
-    <main>
+<div class="status">
+  <div class="status-inner">
+    <span class="dot" id="dot"></span>
+    <span id="status-text">Kontrollerar öppettider…</span>
+  </div>
+</div>
 
-        <h2>Kontakta vår kundtjänst</h2>
+<div class="layout">
 
-        <p>
-            Har du en fråga eller behöver hjälp?
-            Fyll i formuläret nedan så kan vi hjälpa dig.
-        </p>
+  <section class="intro">
+    <h1>Vi hjälper dig vidare</h1>
+    <p class="lead">
+      Beskriv vad som hänt så tar en av våra medarbetare hand om ärendet.
+      Ju mer du berättar, desto snabbare kan vi lösa det.
+    </p>
 
-        <form>
+    <dl class="facts">
+      <div>
+        <dt>Svarstid</dt>
+        <dd>Inom 1 arbetsdag</dd>
+      </div>
+      <div>
+        <dt>Öppettider</dt>
+        <dd>Vardagar 08–17</dd>
+      </div>
+      <div>
+        <dt>Telefon</dt>
+        <dd><a href="tel:+46311234567">031-123 45 67</a></dd>
+      </div>
+      <div>
+        <dt>Brådskande</dt>
+        <dd>Ring hellre än att skriva</dd>
+      </div>
+    </dl>
+  </section>
 
-            <label for="name">Namn</label>
-            <br>
-            <input type="text" id="name" name="name">
+  <section class="panel">
 
-            <br><br>
+    <form id="ticket" novalidate>
+      <h2>Skicka in ett ärende</h2>
+      <p class="hint">Alla fält behöver fyllas i.</p>
 
-            <label for="email">E-post</label>
-            <br>
-            <input type="email" id="email" name="email">
+      <div class="field">
+        <label for="name">Namn</label>
+        <input type="text" id="name" name="name" autocomplete="name">
+        <p class="err" id="name-err">Skriv ditt namn.</p>
+      </div>
 
-            <br><br>
+      <div class="field">
+        <label for="email">E-post</label>
+        <input type="email" id="email" name="email" autocomplete="email">
+        <p class="err" id="email-err">Kontrollera e-postadressen.</p>
+      </div>
 
-            <label for="message">Meddelande</label>
-            <br>
-            <textarea id="message" name="message" rows="8" cols="50"></textarea>
+      <div class="field">
+        <label for="message">Meddelande</label>
+        <textarea id="message" name="message" rows="8"></textarea>
+        <p class="err" id="message-err">Beskriv ditt ärende.</p>
+      </div>
 
-            <br><br>
+      <button type="submit" class="send">Skicka ärende</button>
+      <p class="privacy">Uppgifterna används bara för att besvara ditt ärende.</p>
+    </form>
 
-            <button type="submit">Skicka arende</button>
+    <div class="receipt" id="receipt" role="status" aria-live="polite">
+      <h2>Ärendet är mottaget</h2>
+      <p>Vi hör av oss till den e-postadress du angav.</p>
+      <p>Ditt ärendenummer är <span class="ref" id="ref"></span>. Spara det om du behöver återkomma.</p>
+    </div>
 
-        </form>
+  </section>
 
-    </main>
+</div>
+
+<div class="foot">
+  <div class="foot-inner">
+    Novatrix AB · Organisationsnummer 556000-0000 · Göteborg
+  </div>
+</div>
+
+<script>
+  // Öppettider: vardagar 08–17
+  (function () {
+    var now = new Date();
+    var day = now.getDay();
+    var hour = now.getHours();
+    var open = day >= 1 && day <= 5 && hour >= 8 && hour < 17;
+
+    document.getElementById('status-text').textContent =
+      open ? 'Kundtjänsten är öppen just nu' : 'Stängt just nu — skriv ändå, vi svarar nästa vardag';
+
+    if (!open) document.getElementById('dot').classList.add('closed');
+  })();
+
+  // Validering
+  var form = document.getElementById('ticket');
+
+  function check(id, invalid) {
+    document.getElementById(id).classList.toggle('bad', invalid);
+    document.getElementById(id + '-err').classList.toggle('show', invalid);
+    return !invalid;
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    var name = document.getElementById('name').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var message = document.getElementById('message').value.trim();
+
+    var ok = [
+      check('name', name === ''),
+      check('email', !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)),
+      check('message', message === '')
+    ].every(Boolean);
+
+    if (!ok) {
+      form.querySelector('.bad').focus();
+      return;
+    }
+
+    // Här skickas ärendet vidare i v37. Just nu loggas det bara.
+    console.log({ name: name, email: email, message: message });
+
+    document.getElementById('ref').textContent =
+      'NV-' + Date.now().toString().slice(-6);
+
+    form.style.display = 'none';
+    document.getElementById('receipt').style.display = 'block';
+  });
+
+  // Rensa felet när användaren börjar rätta
+  ['name', 'email', 'message'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', function () {
+      check(id, false);
+    });
+  });
+</script>
 
 </body>
 </html>
