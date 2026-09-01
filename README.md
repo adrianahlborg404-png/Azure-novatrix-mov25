@@ -13,7 +13,7 @@ Repo: <https://github.com/adrianahlborg404-png/Azure-novatrix-mov25>
 
 ## Veckor
 
-### [v34 — Virtuell maskin och webbserver](v34/README.md)
+### [v34 — Virtuell maskin och webbserver](https://github.com/adrianahlborg404-png/Azure-novatrix-mov25/tree/Master/v34)
 
 - [x] Kursrepo uppsatt med README
 - [x] Ubuntu-VM utrullad i Azure
