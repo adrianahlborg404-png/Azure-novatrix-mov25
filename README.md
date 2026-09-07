@@ -5,7 +5,7 @@
 **Kursrepo för Microsoft Azure**
 Adrian Ahlborg — Novatrix AB
 
-
+### Azure | Ubuntu | Nginx | ARM | Templates | Power Automate
 </div>
 
 ---
@@ -61,7 +61,7 @@ nätverket, in i lagringen och vidare ut till Power Automate och Microsoft 365.
 - [x] Kundtjänstsida med ärendeformulär publicerad
 - [x] Testat och dokumenterat
 
-➡️ **[Läs dokumentationen för v34](v34/README.md)**
+➡️ **[Läs dokumentationen för v34](v34)**
 
 </details>
 
@@ -76,7 +76,7 @@ nätverket, in i lagringen och vidare ut till Power Automate och Microsoft 365.
 - [x] Managed identity förberedd inför v37
 - [x] Behörigheterna verifierade och dokumenterade
 
-➡️ **[Läs dokumentationen för v35](v35/README.md)**
+➡️ **[Läs dokumentationen för v35](v35)**
 
 </details>
 
@@ -91,7 +91,7 @@ nätverket, in i lagringen och vidare ut till Power Automate och Microsoft 365.
 - [x] Lösningen flyttad in i nätverket
 - [x] Testat och dokumenterat
 
-➡️ **[Läs dokumentationen för v36](v36/README.md)**
+➡️ **[Läs dokumentationen för v36](v36)**
 
 </details>
 
