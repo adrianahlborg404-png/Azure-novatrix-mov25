@@ -155,18 +155,11 @@ Azure-novatrix-mov25/
 └── v39/               Automation och integration
 ```
 
-Varje veckomapp innehåller:
-
-| Fil / mapp | Innehåll |
-|------------|----------|
-| `README.md` | Genomförande, reflektion och resultat |
-| `img/` | Skärmbilder från Azure-portalen |
-| `src/` *(vid behov)* | Kod, konfiguration och ARM-mallar |
 
 ---
 
 > [!TIP]
-> Vill du följa arbetet kronologiskt? Börja i **v34** och läs vidare uppåt — varje vecka
+> Vill du följa arbetet kronologiskt? Börja i **v34** och läs vidare — varje vecka
 > förutsätter miljön som byggdes veckan innan.
 
 <div align="center">
