@@ -22,7 +22,7 @@ En Ubuntu-maskin med Nginx som publicerar Novatrix kundtjänstsida.
 6. [Nätverk och portar](#6-nätverk-och-portar)
 7. [Installation av Nginx](#7-installation-av-nginx)
 8. [Kundtjänstsidan](#8-kundtjänstsidan)
-9. [Källkod (index.html)](#9-källkod-indexhtml)
+9. [Källkod (index.html)](vecka37/index.html)
 10. [Kostnadshantering](#10-kostnadshantering)
 11. [Vad jag lärde mig](#11-vad-jag-lärde-mig)
 
