@@ -1,0 +1,70 @@
+#cloud-config
+# Körs en gång, vid VM:ens första uppstart.
+# Installerar Nginx, publicerar kundtjänstsidan och sätter upp ufw —
+# lager 04 i försvaret enligt uppgift 3.
+
+package_update: true
+
+packages:
+  - nginx
+  - ufw
+
+write_files:
+  - path: /var/www/html/index.html
+    owner: www-data:www-data
+    permissions: '0644'
+    content: |
+      <!DOCTYPE html>
+      <html lang="sv">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Novatrix Kundtjänst</title>
+      </head>
+      <body>
+          <header>
+              <h1>Novatrix AB</h1>
+              <p>Kundtjänst</p>
+          </header>
+
+          <main>
+              <h2>Kontakta vår kundtjänst</h2>
+              <p>
+                  Har du en fråga eller behöver hjälp?
+                  Fyll i formuläret nedan så kan vi hjälpa dig.
+              </p>
+
+              <form>
+                  <label for="name">Namn</label><br>
+                  <input type="text" id="name" name="name">
+
+                  <br><br>
+
+                  <label for="email">E-post</label><br>
+                  <input type="email" id="email" name="email">
+
+                  <br><br>
+
+                  <label for="message">Meddelande</label><br>
+                  <textarea id="message" name="message" rows="8" cols="50"></textarea>
+
+                  <br><br>
+
+                  <button type="submit">Skicka ärende</button>
+              </form>
+          </main>
+      </body>
+      </html>
+
+runcmd:
+  # Nginx igång
+  - systemctl enable nginx
+  - systemctl restart nginx
+
+  # Brandvägg på själva servern.
+  # Motsvarar: Default: deny (incoming), allow (outgoing)
+  - ufw default deny incoming
+  - ufw default allow outgoing
+  - ufw allow 22/tcp
+  - ufw allow 80/tcp
+  - ufw --force enable
