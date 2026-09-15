@@ -91,7 +91,7 @@ nätverket, in i lagringen och vidare ut till Power Automate och Microsoft 365.
 - [x] Lösningen flyttad in i nätverket
 - [x] Testat och dokumenterat
 
-➡️ **[Läs dokumentationen för v36](v36)**
+➡️ **[Läs dokumentationen för v36](v36/README.md)**
 
 </details>
 
