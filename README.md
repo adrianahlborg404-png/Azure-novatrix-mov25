@@ -76,7 +76,7 @@ nätverket, in i lagringen och vidare ut till Power Automate och Microsoft 365.
 - [x] Managed identity förberedd inför v37
 - [x] Behörigheterna verifierade och dokumenterade
 
-➡️ **[Läs dokumentationen för v35](v35)**
+➡️ **[Läs dokumentationen för v35](v35/README.md)**
 
 </details>
 
