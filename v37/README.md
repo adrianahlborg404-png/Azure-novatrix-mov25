@@ -88,16 +88,7 @@ Backenden har också en enkel hälsokoll:
 
     curl http://localhost:5000/health
 
-## G och VG
 
-Grunden här räcker för G-kärnan: ett ärende skrivs till Blob via den hanterade
-identiteten, utan nyckel. VG-utmaningarna kopplar vidare till resten av v37:
-stäng publik åtkomst och nå kontot via privat endpoint i snet-db, lyft ut
-kontonamnet till en miljövariabel i stället för hårdkodat, eller servera en ren
-informationssida statiskt från `$web` vid sidan om (men just formuläret måste
-ligga kvar på servern, eftersom det skriver via identiteten).
-
-## En not om säkerhet
 
 Backenden kör Flasks inbyggda utvecklingsserver, vilket räcker gott för labben.
 I skarp drift skulle man sätta gunicorn framför och köra sidan över HTTPS. Håll
