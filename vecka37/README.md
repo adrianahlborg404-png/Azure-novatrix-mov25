@@ -48,7 +48,7 @@ Allt bygger vidare på det jag gjort v34 till v36. Servern ligger kvar i `snet-p
 ![Lagringskontot innan det skapas](bilder/bilder/01-lagringskonto.png)
 *Bild 1. Lagringskontot innan det skapas.*
 
-![Containern arenden](bilder/02-container.png)
+![Containern arenden](bilder/bilder/02-container.png)
 *Bild 2. Containern arenden med anonym åtkomstnivå Privat.*
 
 ### Varför Blob Storage
@@ -68,7 +68,7 @@ I v35 skapade jag ID-Novatrix-App men gav den inga rättigheter. Nu var det dags
 1. Koppla identiteten till VM:en. Annars kan servern inte hämta någon token för identiteten.
 2. Ge identiteten en roll på containern. Annars får servern en token, men den ger ingen åtkomst.
 
-![Identiteten kopplad till VM:en](bilder/03-identitet-vm.png)
+![Identiteten kopplad till VM:en](bilder/bilder/03-identitet-vm.png)
 *Bild 3. id-novatrix-app under Användartilldelad på VM:en.*
 
 ### Rolltilldelning
@@ -83,10 +83,10 @@ Jag lade rollen på containern och inte på hela lagringskontot. Då kommer iden
 
 Jag valde bort Storage Blob Data Owner eftersom appen inte behöver kunna ändra behörigheter. Contributor på kontot valde jag också bort, eftersom den rollen kan läsa ut kontonycklarna, och då skulle man ju kunna gå runt identiteten.
 
-![Rolltilldelningen](bilder/04-rolltilldelning.png)
+![Rolltilldelningen](bilder/bilder/04-rolltilldelning.png)
 *Bild 4. Rolltilldelningen, omfånget slutar på /containers/arenden.*
 
-![Identitetens översikt](bilder/05-identitet-oversikt.png)
+![Identitetens översikt](bilder/bilder/05-identitet-oversikt.png)
 *Bild 5. Översikt över identiteten med klient-ID och objekt-ID.*
 
 ## 5. Ändringar i koden
@@ -131,7 +131,7 @@ _credential = ManagedIdentityCredential(client_id="9f47f1fb-9568-472c-b0ca-e2f52
 
 Anledningen till ändring 2 och 3 är att `DefaultAzureCredential` hittar en systemtilldelad identitet av sig själv, men min identitet är användartilldelad. Eftersom en VM kan ha flera användartilldelade identiteter måste koden tala om vilken som ska användas. Klient-ID är ingen hemlighet, det pekar bara ut identiteten. Själva åtkomsten kommer från rolltilldelningen och från att identiteten är kopplad till VM:en.
 
-![app.py i VS Code](bilder/06-app-py.png)
+![app.py i VS Code](bilder/bilder/06-app-py.png)
 *Bild 6. app.py öppen i VS Code med de tre ändrade raderna synliga.*
 
 ### Hur ett ärende sparas
@@ -174,7 +174,7 @@ sudo mkdir -p /opt/arendeapp
 
 Första gången fick jag fel på paketet blinker. Flask behöver en nyare version än den som följer med Ubuntu, och pip kan inte avinstallera något som apt har installerat. Med `--ignore-installed blinker` gick det igenom.
 
-![Paketinstallationen](bilder/07-pip-install.png)
+![Paketinstallationen](bilder/bilder/07-pip-install.png)
 *Bild 7. Installationen och kontrollen att biblioteken går att importera.*
 
 ### Ladda upp filerna
@@ -183,7 +183,7 @@ Första gången fick jag fel på paketet blinker. Flask behöver en nyare versio
 scp -i VM-novatrix-web_key.pem app.py index.html nginx-arende.conf arendeapp.service azureuser@74.241.168.58:/tmp/
 ```
 
-![Filerna överförda med scp](bilder/08-scp.png)
+![Filerna överförda med scp](bilder/bilder/08-scp.png)
 *Bild 8. Filerna överförda med scp.*
 
 ### Flytta filerna och starta tjänsterna
@@ -203,12 +203,12 @@ sudo systemctl enable --now arendeapp
 sudo systemctl restart nginx
 ```
 
-![nginx -t](bilder/09-nginx-test.png)
+![nginx -t](bilder/bilder/09-nginx-test.png)
 *Bild 9. nginx -t visar att konfigurationen är giltig.*
 
 Backenden körs som en systemd-tjänst, så den startar om av sig själv om den kraschar och när VM:en startas om.
 
-![systemctl status](bilder/10-systemctl-status.png)
+![systemctl status](bilder/bilder/10-systemctl-status.png)
 *Bild 10. arendeapp är igång och lyssnar på 127.0.0.1:5000.*
 
 I bilden syns en varning om att Flask kör en utvecklingsserver. Det räcker för uppgiften, men i skarp drift skulle jag köra appen med till exempel gunicorn istället.
@@ -248,19 +248,19 @@ curl http://localhost:5000/health
 
 Svaret visar att backenden är igång och att den har rätt kontonamn och container.
 
-![Hälsokontrollen](bilder/11-halsokontroll.png)
+![Hälsokontrollen](bilder/bilder/11-halsokontroll.png)
 *Bild 11. Hälsokontrollen svarar ok.*
 
 ### Skicka in ett ärende
 
 Jag fyllde i formuläret, bifogade en bild och skickade. Tack-sidan visade ärende-id `20260915T110747Z-20b68635`.
 
-![Tack-sidan](bilder/12-tack-sida.png)
+![Tack-sidan](bilder/bilder/12-tack-sida.png)
 *Bild 12. Tack-sidan efter inskickat ärende.*
 
 I containern fanns sedan en mapp med samma id, med `arende.json` (164 B) och `Tt0NmR.jpg` (346,53 KiB). Eftersom id:t är detsamma vet jag att det är just mitt testärende som sparats. Båda filerna har åtkomstnivå Frekvent, som de ärvt från kontot.
 
-![Ärendet i containern](bilder/13-blobbar.png)
+![Ärendet i containern](bilder/bilder/13-blobbar.png)
 *Bild 13. Ärendet och bilden i containern.*
 
 I bild 13 står det att autentiseringsmetoden är Åtkomstnyckel. Det gäller när jag själv tittar i portalen, eftersom jag är Owner och portalen då använder kontonyckeln. Appen använder inte nyckeln utan kommer bara in via identiteten och rollen på containern.
