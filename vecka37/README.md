@@ -45,7 +45,7 @@ Allt bygger vidare på det jag gjort v34 till v36. Servern ligger kvar i `snet-p
 
 ## 3. Lagringskonto och container
 
-![Lagringskontot innan det skapas](vecka37/bilder/bilder01-lagringskonto.png)
+![Lagringskontot innan det skapas](bilder/bilder01-lagringskonto.png)
 *Bild 1. Lagringskontot innan det skapas.*
 
 ![Containern arenden](bilder/02-container.png)
