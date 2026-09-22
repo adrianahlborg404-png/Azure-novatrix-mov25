@@ -1,0 +1,151 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "description": "Novatrix kundtjanst (MOV25 v38, G-niva). Provisionerar storage med container for arenden, en NSG med webbregel (80/443) och ett VNet med subnat."
+  },
+  "parameters": {
+    "namePrefix": {
+      "type": "string",
+      "defaultValue": "novatrix",
+      "minLength": 3,
+      "maxLength": 12,
+      "metadata": { "description": "Prefix for alla resursnamn, sa att allt hanger ihop." }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": { "description": "Region for resurserna. Default: resursgruppens region." }
+    },
+    "storageSku": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [ "Standard_LRS", "Standard_GRS" ],
+      "metadata": { "description": "Redundans for storage-kontot." }
+    },
+    "vnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.20.0.0/16",
+      "metadata": { "description": "Adressrymd for VNet:et." }
+    },
+    "publicSubnetPrefix": {
+      "type": "string",
+      "defaultValue": "10.20.1.0/24",
+      "metadata": { "description": "Adressrymd for det publika subnatet." }
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {
+        "kurs": "MOV25",
+        "vecka": "v38",
+        "skapad-av": "arm-template"
+      }
+    }
+  },
+  "variables": {
+    "storageName": "[toLower(format('st{0}{1}', replace(parameters('namePrefix'), '-', ''), take(uniqueString(resourceGroup().id), 8)))]",
+    "containerName": "arenden",
+    "nsgPublicName": "[format('nsg-{0}-public', parameters('namePrefix'))]",
+    "vnetName": "[format('vnet-{0}', parameters('namePrefix'))]",
+    "subnetPublicName": "snet-public"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2023-01-01",
+      "name": "[variables('storageName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "sku": { "name": "[parameters('storageSku')]" },
+      "kind": "StorageV2",
+      "properties": {
+        "accessTier": "Hot",
+        "minimumTlsVersion": "TLS1_2",
+        "supportsHttpsTrafficOnly": true,
+        "allowBlobPublicAccess": false
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices",
+      "apiVersion": "2023-01-01",
+      "name": "[format('{0}/default', variables('storageName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2023-01-01",
+      "name": "[format('{0}/default/{1}', variables('storageName'), variables('containerName'))]",
+      "properties": { "publicAccess": "None" },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageName'), 'default')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2023-09-01",
+      "name": "[variables('nsgPublicName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Allow-Web-Inbound",
+            "properties": {
+              "description": "HTTP och HTTPS till kundtjanstsidan.",
+              "priority": 100,
+              "direction": "Inbound",
+              "access": "Allow",
+              "protocol": "Tcp",
+              "sourceAddressPrefix": "Internet",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRanges": [ "80", "443" ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2023-09-01",
+      "name": "[variables('vnetName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "addressSpace": { "addressPrefixes": [ "[parameters('vnetAddressPrefix')]" ] },
+        "subnets": [
+          {
+            "name": "[variables('subnetPublicName')]",
+            "properties": {
+              "addressPrefix": "[parameters('publicSubnetPrefix')]",
+              "networkSecurityGroup": { "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgPublicName'))]" }
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgPublicName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "storageAccountName": {
+      "type": "string",
+      "value": "[variables('storageName')]"
+    },
+    "blobEndpoint": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2023-01-01').primaryEndpoints.blob]"
+    },
+    "vnetName": {
+      "type": "string",
+      "value": "[variables('vnetName')]"
+    },
+    "nsgName": {
+      "type": "string",
+      "value": "[variables('nsgPublicName')]"
+    }
+  }
+}
