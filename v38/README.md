@@ -404,7 +404,7 @@ az vm start -g RG-novatrix -n VM-novatrix-web
 az vm show -d -g RG-novatrix -n VM-novatrix-web --query publicIps -o tsv
 ```
 
-Skärmbilden visar ett ärende som skickades in genom formuläret under v37 (ärende-id från 2026-09-15). Den visar att formuläret och backend fungerar på den VM som mallen i ett senare steg ska ta över.
+Skärmbilden visar ett ärende som skickades in genom formuläret Den visar att formuläret och backend fungerar på den VM som mallen i ett senare steg ska ta över.
 
 ![Ärende inskickat, tack-sida med ärende-id (v37)](bilder/06-formular-tack.png)
 
