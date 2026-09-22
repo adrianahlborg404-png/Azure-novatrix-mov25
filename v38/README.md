@@ -54,7 +54,7 @@ v38/
 | `templates/azuredeploy.parameters.json` | Värden för just den här miljön, så att mallen kan återanvändas med andra värden. |
 | `deploy.sh` | Skapar resursgruppen, visar en förhandsgranskning (what-if) och deployar efter bekräftelse. |
 
-I reporoten finns också en `.gitattributes`, som ser till att skript sparas med Linux-radslut (LF) även när de committas från Windows. Annars kan de inte köras i Cloud Shell.
+
 
 ---
 
