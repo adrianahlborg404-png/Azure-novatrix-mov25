@@ -26,8 +26,9 @@ I tidigare veckor har Novatrix kundtjänst byggts upp steg för steg i Azure-por
 | Storage account + container `arenden` | **ARM-template** | `rg-novatrix-iac` |
 | NSG med webbregel (80/443) | **ARM-template** | `rg-novatrix-iac` |
 | VNet `10.20.0.0/16` med `snet-public` och `snet-private` | **ARM-template** | `rg-novatrix-iac` |
-| VM med Nginx och ärendeformulär | Manuellt (v34/v37) | `RG-novatrix` |
-| Entra ID-användare, grupper och RBAC | Manuellt (v35) | Entra ID |
+| VM med Nginx och ärendeformulär | Manuellt (v36/v37) | `RG-novatrix` |
+| Entra ID-användare och grupper | Manuellt (v35) | Entra ID |
+| Hanterad identitet och RBAC-roller | Manuellt (v35/v37) | `RG-novatrix` |
 
 Mallen deployas till en **egen, tom resursgrupp** (`rg-novatrix-iac`) och inte till den handbyggda `RG-novatrix`. Då krockar den inte med befintliga resurser. Att allt skapas i en tom grupp visar dessutom att mallen är komplett och inte beror på något som klickats fram i portalen.
 
@@ -53,8 +54,6 @@ v38/
 | `templates/azuredeploy.json` | Beskriver *vad* som ska finnas i Azure: storage, container, NSG och VNet. |
 | `templates/azuredeploy.parameters.json` | Värden för just den här miljön, så att mallen kan återanvändas med andra värden. |
 | `deploy.sh` | Skapar resursgruppen, visar en förhandsgranskning (what-if) och deployar efter bekräftelse. |
-
-
 
 ---
 
@@ -387,7 +386,7 @@ Regeln `Allow-Web-Inbound` tillåter TCP 80 och 443 från Internet, och `snet-pu
 
 ![NSG-regel och subnät med NSG](bilder/05-natverk-nsg-subnat.png)
 
-Hela NSG:n, inklusive Azures standardregler. Standardreglerna (prioritet 65000 och uppåt) blockerar all övrig inkommande trafik från Internet, så endast port 80 och 443 är öppna:
+Hela NSG:n, inklusive Azures standardregler. Av dem är det `DenyAllInBound` på prioritet 65500 som blockerar all övrig inkommande trafik. `AllowVnetInBound` och `AllowAzureLoadBalancerInBound` släpper bara in trafik inifrån VNet:et och från Azures lastbalanserare, inte från Internet. Från Internet är alltså endast port 80 och 443 öppna:
 
 ```bash
 az network nsg rule list -g rg-novatrix-iac --nsg-name nsg-novatrix-public --include-default -o table
@@ -400,11 +399,14 @@ az network nsg rule list -g rg-novatrix-iac --nsg-name nsg-novatrix-public --inc
 Ärendeformuläret körs på VM:en från v34/v37 (`RG-novatrix`) och ingår inte i G-mallen. VM:en startas och formuläret nås via dess publika IP:
 
 ```bash
-az vm start -g RG-novatrix -n VM-novatrix-web
-az vm show -d -g RG-novatrix -n VM-novatrix-web --query publicIps -o tsv
+az vm start -g RG-novatrix -n VM-Novatrix-Web-02-vecka-36-ny
+az vm show -d -g RG-novatrix -n VM-Novatrix-Web-02-vecka-36-ny --query publicIps -o tsv
+
+# Stäng av igen efteråt, så att den inte kostar i onödan
+az vm deallocate -g RG-novatrix -n VM-Novatrix-Web-02-vecka-36-ny
 ```
 
-Skärmbilden visar ett ärende som skickades in genom formuläret Den visar att formuläret och backend fungerar på den VM som mallen i ett senare steg ska ta över.
+Skärmbilden visar ett ärende som skickades in genom formuläret under v37 (ärende-id från 2026-09-15). Den visar att formuläret och backend fungerar på den VM som mallen i ett senare steg ska ta över.
 
 ![Ärende inskickat, tack-sida med ärende-id (v37)](bilder/06-formular-tack.png)
 
@@ -444,7 +446,7 @@ VNet:et utökades med ett **privat subnät**, `snet-private` (`10.20.2.0/24`), f
 }
 ```
 
-Ändringen committades till `Master` med meddelandet `v38: privat subnät i VNet:et`.
+Ändringen committades till `Master` med meddelandet `v38: privat subnät i VNet:et.`
 
 ### Förhandsgranskning och deploy av ändringen
 
@@ -476,7 +478,7 @@ git show HEAD -- templates/azuredeploy.json
 
 ![Diff för ändringen](bilder/10-git-show.png)
 
-De första commitsen i v38-historiken visar när mappstrukturen sattes upp och en felaktig testfil togs bort. Historiken har lämnats orörd, eftersom spårbarheten är själva poängen med versionshantering.
+De två tidigare commitsen visar när mallen först lades till och när en felaktig testfil togs bort. Historiken har lämnats orörd, eftersom spårbarheten är själva poängen med versionshantering.
 
 ### Hur versionshanteringen hjälper
 
@@ -536,6 +538,6 @@ az group delete -n rg-novatrix-iac --yes --no-wait
 
 ## Begränsningar och reflektion
 
-- **Det här är G-nivå:** mallen täcker lagring och nätverk. VM:en med Nginx och formuläret, samt managed identity och RBAC från v37, är fortfarande byggda för hand. Nästa steg vore att lägga till VM, publik IP, nätverkskort, identitet och rolltilldelning i samma mall, så att hela kundtjänsten kan återskapas med ett kommando.
+- **Det här är G-nivå:** mallen täcker lagring och nätverk. VM:en med Nginx och formuläret, samt den hanterade identiteten (v35) och dess rolltilldelning (v37), är fortfarande byggda för hand. Nästa steg vore att lägga till VM, publik IP, nätverkskort, identitet och rolltilldelning i samma mall, så att hela kundtjänsten kan återskapas med ett kommando.
 - **Entra ID ingår inte:** användare och grupper från v35 hanteras av Microsoft Graph, inte av Azure Resource Manager, och kan därför inte skapas med ARM-templates.
 - **Det viktigaste jag lärt mig:** skillnaden mellan att *göra* något i portalen och att *beskriva* det som kod. Koden blir dokumentation, historik och återställningsplan på samma gång. Med what-if kan jag dessutom se konsekvenserna innan jag ändrar något.
