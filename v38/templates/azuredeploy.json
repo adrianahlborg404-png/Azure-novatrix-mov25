@@ -32,6 +32,11 @@
       "type": "string",
       "defaultValue": "10.20.1.0/24",
       "metadata": { "description": "Adressrymd for det publika subnatet." }
+       },
+    "privateSubnetPrefix": {
+      "type": "string",
+      "defaultValue": "10.20.2.0/24",
+      "metadata": { "description": "Adressrymd for det privata subnatet." }
     },
     "tags": {
       "type": "object",
@@ -47,7 +52,8 @@
     "containerName": "arenden",
     "nsgPublicName": "[format('nsg-{0}-public', parameters('namePrefix'))]",
     "vnetName": "[format('vnet-{0}', parameters('namePrefix'))]",
-    "subnetPublicName": "snet-public"
+    "subnetPublicName": "snet-public",
+    "subnetPrivateName": "snet-private"
   },
   "resources": [
     {
@@ -120,7 +126,13 @@
             "name": "[variables('subnetPublicName')]",
             "properties": {
               "addressPrefix": "[parameters('publicSubnetPrefix')]",
-              "networkSecurityGroup": { "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgPublicName'))]" }
+                      "networkSecurityGroup": { "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgPublicName'))]" }
+            }
+          },
+          {
+            "name": "[variables('subnetPrivateName')]",
+            "properties": {
+              "addressPrefix": "[parameters('privateSubnetPrefix')]"
             }
           }
         ]
