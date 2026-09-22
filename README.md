@@ -116,7 +116,7 @@ nätverket, in i lagringen och vidare ut till Power Automate och Microsoft 365.
 <br>
 
 - [x] Veckoavsnitt tillagt i repot
-- [x] ARM-mallar för VM, nätverk och lagring
+- [x] ARM-mallar för nätverk och lagring
 - [x] Miljön utrullad från mallarna
 - [x] Ändring gjord och synlig i historiken
 - [x] Dokumenterat hur miljön byggs upp från noll
