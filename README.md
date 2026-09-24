@@ -20,12 +20,13 @@ Adrian Ahlborg — Novatrix AB
 
 | Vecka | Tema | Nyckelteknik | Status |
 |:-----:|------|--------------|:------:|
-| [**v34**](v34) | Virtuell maskin och webbserver | Ubuntu VM · Nginx | ✅ |
-| [**v35**](v35) | Entra ID och behörigheter | Entra ID · RBAC | ✅ |
+| [**v34**](v34/README.md) | Virtuell maskin och webbserver | Ubuntu VM · Nginx | ✅ |
+| [**v35**](v35/README.md) | Entra ID och behörigheter | Entra ID · RBAC | ✅ |
 | [**v36**](v36/README.md) | Nätverk och säkerhet | VNet · Subnät · NSG | ✅ |
 | [**v37**](vecka37/README.md) | Lagring | Storage Account · Blob · Managed Identity | ✅ |
 | [**v38**](v38/README.md) | Infrastruktur som kod | ARM-mallar | ✅ |
 | [**v39**](v39/README.md) | Automation och integration | Power Automate · Microsoft 365 | ✅ |
+| [**v40**](v40/README.md) | VM, containers och serverless | serverless med Azure Function. | ✅ |
 
 ---
 
@@ -140,6 +141,23 @@ nätverket, in i lagringen och vidare ut till Power Automate och Microsoft 365.
 
 </details>
 
+<details>
+<summary><b>v40 — VM, containers och serverless</b></summary>
+
+<br>
+
+- [x] Veckoavsnitt tillagt i repot
+- [x] Paketera och kör en del av kundtjänsten som en container på Azure
+- [x] implementera mottagningen av ett ärende serverless med en Azure Function.
+- [x] Beskriv och jämför VM, containers och serverless
+- [x] Hela kedjan testad och dokumenterad
+- [x] för - och nackdelar för just en funktion som ärendemottagningen.
+
+➡️ **[Läs dokumentationen för v40](v40/README.md)**
+
+</details>
+
+
 ---
 
 ## 📂 Struktur
@@ -153,13 +171,14 @@ Azure-novatrix-mov25/
 ├── v37/               Lagring
 ├── v38/               Infrastruktur som kod
 └── v39/               Automation och integration
+└── v40/               VM, containers och serverless
 ```
 
 
 ---
 
 > [!TIP]
-> Vill du följa arbetet kronologiskt? Börja i **v34** och läs vidare — varje vecka
+> Vill du följa arbetet kronologiskt? Börja i **v36** och läs vidare — varje vecka
 > förutsätter miljön som byggdes veckan innan.
 
 <div align="center">
