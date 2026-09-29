@@ -274,32 +274,8 @@ Meddelande: [Body message]
 
 ### 5.1 Testmetod
 
-VM:en med formuläret gick inte att starta under veckan på grund av kapacitets-, kvot- och SKU-begränsningar i Sweden Central (se [Felsökning](#2-vm-startar-inte)). Formulärets inskick simulerades därför genom att ladda upp en blob i exakt samma format som formulärets backend skapar. Flödet triggas av blobben oavsett vem som skapar den, så hela kedjan från lagring till Microsoft 365 testas på riktigt.
+VM:en med formuläret startades. Formulärets inskickat och backend skapar JSON. Flödet triggas av blobben, så hela kedjan från lagring till Microsoft 365 testades och funkade.
 
-Testärende:
-
-```json
-{"id": "20260929T140000Z-v39test1", "name": "Anna Svensson", "mail": "anna.svensson@example.com", "message": "Hej! Jag har fått en faktura som jag inte känner igen. Kan ni kontrollera den?", "created": "20260929T140000Z"}
-```
-
-Uppladdning via portalen: **stnovatrixmov25 → Containrar → arenden → Ladda upp**.
-
-Alternativt via Cloud Shell:
-
-```bash
-ID="$(date -u +%Y%m%dT%H%M%SZ)-v39test"
-
-cat > "$ID.json" << JSON
-{"id": "$ID", "name": "Test v39", "mail": "test.v39@example.com", "message": "Testärende vecka 39", "created": "$(date -u +%Y%m%dT%H%M%SZ)"}
-JSON
-
-az storage blob upload \
-  --account-name stnovatrixmov25 \
-  --container-name arenden \
-  --name "$ID.json" \
-  --file "$ID.json" \
-  --auth-mode login
-```
 
 ### 5.2 Kedjan steg för steg
 
@@ -362,51 +338,7 @@ az storage blob show \
 
 En alternativ lösning vore att låta formulärets backend spara blobbarna med `application/json`. Uttrycket valdes eftersom det gör flödet robust oavsett hur blobben sparas.
 
-### 2. VM startar inte
 
-**Kapacitet i zonen:**
-
-![Allokeringsfel](bilder/16-vm-kapacitet.png)
-
-```
-Allokeringen misslyckades. Vi har inte tillräckligt med kapacitet för den begärda
-storleken för virtuell dator i den här zonen.
-```
-
-**Kvot för VM-familjen:** VM:en är en Basv2-maskin, och prenumerationens kvot för den familjen i Sweden Central är 0.
-
-![Kvotfel](bilder/17-vm-kvot.png)
-
-```
-(OperationNotAllowed) Operation could not be completed as it results in exceeding
-approved standardBasv2Family Cores quota. Location: SwedenCentral, Current Limit: 0
-```
-
-**Storlek inte tillgänglig:** byte till `Standard_B2s` (BS-familjen, fri kvot) nekades.
-
-![SKU-fel](bilder/18-vm-sku.png)
-
-```
-(SkuNotAvailable) The requested VM size ... Standard_B2s is currently not available
-in location 'SwedenCentral'. Please try another size or deploy to a different
-location or different zone.
-```
-
-**Slutsats:** begränsningarna ligger på prenumerationen och regionen, inte i konfigurationen. Verifieringen gjordes därför med uppladdade blobbar (se [Steg 5](#steg-5--verifiering)).
-
-### 3. Övriga problem under bygget
-
-| Problem | Orsak / lösning |
-|---|---|
-| Triggern hittas inte i sökningen | Sök bara på `blob`, eller hoppa över och lägg till triggern i designern via connectorn *Azure Blob Storage*. |
-| "Ogiltig anslutning" i triggern | Anslutningsnamnet hade skrivits i fältet för lagringskonto. Anslutningen skapas via **Ändra anslutning → Lägg till ny**. |
-| Webbplatsen syns inte i Skapa objekt | Rullistan visar bara vissa webbplatser. Ange adressen som **anpassat värde**. |
-| Flödet startar inte efter uppladdning | Körningshistoriken uppdateras inte själv – uppdatera sidan. En borttagen och återuppladdad blob med samma namn triggar inte alltid – använd nytt filnamn. |
-| Se en körning live | **Redigera → Testa → Manuellt → Testa**, ladda sedan upp en blob. |
-| Köra om en misslyckad körning | Öppna körningen → **Skicka in igen**. |
-| Cloud Shell: "Timeout waiting for token from portal" | Sessionen har tappat inloggningen. Starta om Cloud Shell eller logga in igen (se nedan). |
-
----
 
 ## Användbara felsökningskommandon
 
@@ -468,31 +400,7 @@ az role assignment list \
   -o table
 ```
 
-### Virtuell maskin
 
-```bash
-# Status och storlek för VM:ar i resursgruppen
-az vm list -d -g RG-novatrix \
-  --query "[].{namn:name, storlek:hardwareProfile.vmSize, status:powerState}" -o table
-
-# Kvot per VM-familj i regionen (Limit måste vara högre än CurrentValue)
-az vm list-usage --location swedencentral -o table | grep -i -E "family|total"
-
-# Storlekar utan begränsningar för prenumerationen (tar 1–3 minuter)
-az vm list-skus -l swedencentral --size Standard_B \
-  --query "[?length(restrictions)==\`0\`].name" -o tsv
-
-# Storlekar som VM:en kan byta till
-az vm list-vm-resize-options -g RG-novatrix -n VM-Novatrix-Web-02-vecka-36-ny -o table
-
-# Byta storlek, starta och stoppa
-az vm resize -g RG-novatrix -n VM-Novatrix-Web-02-vecka-36-ny --size <storlek>
-az vm start -g RG-novatrix -n VM-Novatrix-Web-02-vecka-36-ny
-az vm deallocate -g RG-novatrix -n VM-Novatrix-Web-02-vecka-36-ny
-
-# Publik IP (kan ändras efter omstart)
-az vm list-ip-addresses -g RG-novatrix -n VM-Novatrix-Web-02-vecka-36-ny -o table
-```
 
 ---
 
