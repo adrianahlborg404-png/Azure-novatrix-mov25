@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head><meta charset="utf-8"><title>Novatrix – nytt ärende (serverless)</title></head>
+<body>
+  <h1>Novatrix kundtjänst – nytt ärende</h1>
+  <form action="https://func-novatrix-arende-aa-bqenhqezfze2h8gf.swedencentral-01.azurewebsites.net/api/arende" method="post">
+    <p><label>Namn<br><input name="name" required></label></p>
+    <p><label>E-post<br><input name="mail" type="email" required></label></p>
+    <p><label>Ärende<br><textarea name="message" rows="5" required></textarea></label></p>
+    <button type="submit">Skicka</button>
+  </form>
+</body>
+</html>
